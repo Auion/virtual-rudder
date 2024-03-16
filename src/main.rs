@@ -19,7 +19,6 @@ const SYN_REPORT: input_event = input_event {
     value: 0,
 };
 
-// TODO: Flags --left {uint} and --right {uint}
 struct Arguments {
     device_path: String,
     left_axis: u16,
@@ -52,7 +51,7 @@ impl TryFrom<&Vec<String>> for Arguments {
                     Err(err) => return Err(Error::new(ErrorKind::InvalidInput, err.to_string()))
                 }
             }
-            None => return Err(Error::new(ErrorKind::InvalidInput, "Required: left axis"))
+            None => return Err(Error::new(ErrorKind::InvalidInput, "Required: right axis"))
         };
 
 
@@ -62,71 +61,8 @@ impl TryFrom<&Vec<String>> for Arguments {
             right_axis,
         })
     }
-
-    // fn try_from(value: Vec<String>) -> Result<Self> {
-    //     let mut args = value.iter();
-    //     let _ = args.next(); // Throw away the program path
-    //
-    //     // Put arguments here
-    //     let mut left_axis: Option<u16> = Option::None;
-    //     let mut right_axis: Option<u16> = Option::None;
-    //     let mut device_path: Option<String> = Option::None;
-    //
-    //     while let Some(arg) = args.next() {
-    //         match arg.as_ref() {
-    //             // Required Arguments
-    //             "-d" | "--device" => {
-    //                 if let Some(str) = args.next() {
-    //                     device_path = Some(str.clone());
-    //                 } else {
-    //                     return Err(Error::new(ErrorKind::InvalidInput, "Required: --device [path]"));
-    //                 };
-    //             },
-    //             "-l" | "--left" => {
-    //                 if let Some(str) = args.next() {
-    //                     match str.parse::<u16>() {
-    //                         Ok(val) => left_axis = Some(val),
-    //                         Err(_err) => return Err(Error::new(ErrorKind::InvalidInput, "Failed to parse right axis value")),
-    //                     };
-    //                 } else {
-    //                     return Err(Error::new(ErrorKind::InvalidInput, "Required: --left [axis_num]"))
-    //                 };
-    //             },
-    //             "-r" | "--right" => {
-    //                 if let Some(str) = args.next() {
-    //                     match str.parse::<u16>() {
-    //                         Ok(val) => right_axis = Some(val),
-    //                         Err(_err) => return Err(Error::new(ErrorKind::InvalidInput, "Failed to parse right axis value")),
-    //                     };
-    //                 } else {
-    //                     return Err(Error::new(ErrorKind::InvalidInput, "Required: --right [axis_num]"))
-    //                 };
-    //             }
-    //             // Optional Arguments (none currently)
-    //             _ => return Err(Error::new(ErrorKind::InvalidInput, format!("Unknown argument given: {}", arg) ))
-    //         };
-    //     };
-    //
-    //     let left_axis = match left_axis {
-    //         Some(val) => val,
-    //         None => return Err(Error::new(ErrorKind::InvalidInput, "Missing argument: --left [axis_num]"))
-    //     };
-    //     let right_axis = match right_axis {
-    //         Some(val) => val,
-    //         None => return Err(Error::new(ErrorKind::InvalidInput, "Missing argument: --right [axis_num]"))
-    //     };
-    //     let device_path = match device_path {
-    //         Some(val) => val,
-    //         None => return Err(Error::new(ErrorKind::InvalidInput, "Missing argument: --device [path]"))
-    //     };
-    //
-    //     Ok(Self {
-    //         left_axis,
-    //         right_axis,
-    //         device_path,
-    //     })
-    // }
 }
+
 impl Arguments {
     pub fn left_axis(&self) -> u16 {
         self.left_axis
@@ -153,7 +89,8 @@ fn main() -> Result<()> {
     let input_joy = File::open(input_path)?;
     
     let virt_path = "/dev/uinput";
-    let virt_joy = OpenOptions::new().read(false).write(true).create(false).open(virt_path)?;
+    let virt_joy = OpenOptions::new().read(false).write(true)
+        .create(false).open(virt_path)?;
 
     let input_joy = EvdevHandle::new(input_joy);
     let virt_joy = UInputHandle::new(virt_joy);
@@ -196,18 +133,15 @@ fn main() -> Result<()> {
 
         let _ = input_joy.read(&mut raw_input);
         let event = InputEvent::from_raw(&raw_input[0])?;
-        match event.code {
-            _ if left_axis == event.code => left = event.value, // Left Pedal
-            _ if right_axis == event.code => right = -event.value, // Right pedal
-            _ => continue,
-        };  
-        // if event.code == left_axis {
-        //     left = event.value;
-        // } else if event.code == right_axis {
-        //     right = -event.value;
-        // } else {
-        //     continue;
-        // };
+        
+        if event.code == left_axis {
+            left = event.value;
+        } else if event.code == right_axis {
+            right = -event.value;
+        } else {
+            continue;
+        };
+
         let yaw_value = left + right;
         println!("Yaw: {}", yaw_value);
 
