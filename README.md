@@ -54,9 +54,9 @@ Even moreso, I'm making it available to y'all.
 
 If you're putting in a pull request (PR), make sure to check the issues first.
 
-I still haven't really decided on whether I'm going to even accept any pull requests, so your
+I still haven't really decided on whether I'm going to even accept pull requests at all, so your
 likihood of a merge is completely unknown right now.
 
 That said, the program, as it currently exists, is quite simple.
 
-Poke around, the room is small.
+Poke around, the room (i.e code) is small.
