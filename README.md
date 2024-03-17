@@ -61,7 +61,7 @@ Even moreso, I'm making it available to y'all.
 If you're putting in a pull request (PR), make sure to check the issues first.
 
 I still haven't really decided on whether I'm going to even accept pull requests at all, so your
-likihood of a merge is completely unknown right now.
+likihood of a merge is completely unknown right now. This may change once I decide on a license for the program.
 
 That said, the program, as it currently exists, is quite simple.
 
