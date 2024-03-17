@@ -1,4 +1,4 @@
-# virtual-yaw-axis
+# Virtual Rudder
 
 ---
 
@@ -11,7 +11,7 @@
 
 ## Purpose
 
-virtual-yaw-axis simply combines two axes from a joystick / controller
+virtual-rudder simply combines two axes from a joystick / controller
 and uses their input to create a combined yaw axis in a virtual controller
 
 For example (and the reason why I made this program), if you have vehicle pedals, 
@@ -22,7 +22,7 @@ controller in a similar manner.
 
 ## Usage
 
-virtual-yaw-axis \[device\_path\] \[left\_axis\_num\] \[right\_axis\_num\]
+``virtual-rudder \[device\_path\] \[left\_axis\_num\] \[right\_axis\_num\]``
 
 Invert output: Include 'i' as as the final argument
 
