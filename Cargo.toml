@@ -1,5 +1,5 @@
 [package]
-name = "virtual-yaw-axis"
+name = "virtual-rudder"
 version = "0.1.0"
 edition = "2021"
 authors = ["Auion"]

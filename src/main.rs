@@ -8,7 +8,7 @@ use input_linux::sys::{input_event, timeval, BUS_VIRTUAL, EV_SYN};
 use input_linux::uinput::UInputHandle;
 use input_linux::evdev::EvdevHandle;
 
-const DEVICE_NAME: &[u8] = b"Virtual Yaw Axis";
+const DEVICE_NAME: &[u8] = b"Virtual Rudder";
 const SYN_REPORT: input_event = input_event {
     time: timeval {
         tv_sec: 0,
