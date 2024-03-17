@@ -23,6 +23,7 @@ struct Arguments {
     device_path: String,
     left_axis: u16,
     right_axis: u16,
+    invert_output: bool,
 }
 impl TryFrom<&Vec<String>> for Arguments {
     type Error = Error;
@@ -53,12 +54,19 @@ impl TryFrom<&Vec<String>> for Arguments {
             }
             None => return Err(Error::new(ErrorKind::InvalidInput, "Required: right axis"))
         };
+        let mut invert_output: bool = false;
+        if let Some(val) = args.next() {
+            if val.contains('i') { 
+               invert_output = true;
+            };
+        };
 
 
         Ok(Self {
             device_path,
             left_axis,
             right_axis,
+            invert_output
         })
     }
 }
@@ -73,6 +81,9 @@ impl Arguments {
     pub fn device_path(&self) -> &str {
         self.device_path.as_ref()
     }
+    pub fn invert_output(&self) -> bool {
+        self.invert_output
+    }
 }
 
 
@@ -85,6 +96,7 @@ fn main() -> Result<()> {
     let input_path: &str = args.device_path();
     let left_axis: u16 = args.left_axis();
     let right_axis: u16 = args.right_axis();
+    let invert_output: bool = args.invert_output();
     
     let input_joy = File::open(input_path)?;
     
@@ -100,26 +112,34 @@ fn main() -> Result<()> {
         ..Default::default()
     };
 
+    let left_info = input_joy.absolute_info(AbsoluteAxis::from_code(left_axis).unwrap())?;
+    let right_info = input_joy.absolute_info(AbsoluteAxis::from_code(right_axis).unwrap())?;
+
+    // Set current values for selected axes.
+    // This is important, as some devices' axes
+    // have a non-zero resting value.
+    let mut left: i32 = -left_info.value;
+    let mut right: i32 = right_info.value;
+
+    // TODO: Derive min-max values from 
+    // the input device
     let virt_rudder = AbsoluteInfoSetup {
         axis: AbsoluteAxis::Rudder,
         info: AbsoluteInfo {
             value: 0,
-            minimum: -255,
-            maximum: 255,
+            minimum: -left_info.maximum,
+            maximum: right_info.maximum,
             fuzz: 0,
             flat: 0,
-            resolution: 5, // Can this just be zero?
+            resolution: 42, // Can this just be zero?
         }
     };
-
 
     virt_joy.set_evbit(input_linux::EventKind::Absolute)?; // Required for yaw input
     virt_joy.set_evbit(input_linux::EventKind::Key)?; // Required for ButtonTrigger to register
     virt_joy.set_keybit(input_linux::Key::ButtonTrigger)?; // Required for joystick recognition
     virt_joy.create(&virt_id, DEVICE_NAME, 0, &[virt_rudder])?;
 
-    let mut left: i32 = 0;
-    let mut right: i32 = 0;
     loop {
         let mut raw_input = [ input_event {
             time: timeval {
@@ -130,19 +150,20 @@ fn main() -> Result<()> {
             code: 0,
             value: 0,
         }];
-
+        
         let _ = input_joy.read(&mut raw_input);
         let event = InputEvent::from_raw(&raw_input[0])?;
         
         if event.code == left_axis {
-            left = event.value;
+            left = -event.value;
         } else if event.code == right_axis {
-            right = -event.value;
+            right = event.value;
         } else {
             continue;
         };
 
-        let yaw_value = left + right;
+        let mut yaw_value = left + right;
+        if invert_output { yaw_value = -yaw_value; };
         println!("Yaw: {}", yaw_value);
 
         // println!("{:?}", event);
