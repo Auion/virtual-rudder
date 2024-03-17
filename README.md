@@ -20,6 +20,12 @@ you can use the clutch and acceleration pedal as if they are rudder pedals.
 Though untested, in theory you can use the left and right trigger on an xbox or playstation-like
 controller in a similar manner.
 
+## Usage
+
+virtual-yaw-axis \[device\_path\] \[left\_axis\_num\] \[right\_axis\_num\]
+
+Invert output: Include 'i' as as the final argument
+
 ## Why?
 
 I have a logitech attack 3 joystick. It works quite well, but does not twist like 
