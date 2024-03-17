@@ -1,10 +1,10 @@
 [package]
-name = "yaw-combine"
+name = "virtual-yaw-axis"
 version = "0.1.0"
 edition = "2021"
+authors = ["Auion"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 input-linux = "0.6.0"
-#input-linux-sys = "0.8.0"
