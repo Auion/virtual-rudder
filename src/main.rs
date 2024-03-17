@@ -115,6 +115,11 @@ fn main() -> Result<()> {
     let left_info = input_joy.absolute_info(AbsoluteAxis::from_code(left_axis).unwrap())?;
     let right_info = input_joy.absolute_info(AbsoluteAxis::from_code(right_axis).unwrap())?;
 
+    if left_info.maximum != right_info.maximum {
+        eprintln!("Maximum values for input axes are not equal.");
+        eprintln!("This may result in unexpected behavior.");
+    };
+
     // Set current values for selected axes.
     // This is important, as some devices' axes
     // have a non-zero resting value.
@@ -126,7 +131,7 @@ fn main() -> Result<()> {
     let virt_rudder = AbsoluteInfoSetup {
         axis: AbsoluteAxis::Rudder,
         info: AbsoluteInfo {
-            value: 0,
+            value: (left + right),
             minimum: -left_info.maximum,
             maximum: right_info.maximum,
             fuzz: 0,
