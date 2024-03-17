@@ -22,6 +22,9 @@ controller in a similar manner.
 
 ## Usage
 
+Both the device path and correct values for left & right axes can be found
+by running the command line utility ``evtest`` with no arguments.
+
 ``virtual-rudder [device_path] [left_axis_num] [right_axis_num]``
 
 Invert output: Include 'i' as as the final argument
