@@ -22,7 +22,7 @@ controller in a similar manner.
 
 ## Usage
 
-``virtual-rudder \[device\_path\] \[left\_axis\_num\] \[right\_axis\_num\]``
+``virtual-rudder [device_path] [left_axis_num] [right_axis_num]``
 
 Invert output: Include 'i' as as the final argument
 
