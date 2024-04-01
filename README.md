@@ -29,6 +29,12 @@ by running the command line utility ``evtest`` with no arguments.
 
 Invert output: Include 'i' as as the final argument
 
+## Demonstration
+
+With knockoff Xbox controller:
+[example.webm](https://github.com/Auion/virtual-rudder/assets/63483229/92c53607-2b31-4589-98ff-97d0b742b38b)
+
+
 ## Why?
 
 I have a logitech attack 3 joystick. It works quite well, but does not twist like 
